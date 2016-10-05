@@ -207,8 +207,8 @@ export default class Client {
 const pgrbVars = [
   'UGRD', 'VGRD', 'VRATE', 'GUST', 'HGT', 'TMP', 'RH', 'O3MR', 'ABSV', 'VVEL',
   'CLWMR', 'HINDEX', 'MSLET', 'PRES', 'TSOIL', 'SOILW', 'WEASD', 'SNOD', 'SPFH',
-  'DPT', 'var', 'CPOFP', 'WILT', 'FLDCP', 'SUNSD', 'LFTX', 'CAPE', 'CIN',
-  'PWAT', 'CWAT', 'TOZNE', 'HLCY', 'USTM', 'VSTM', 'ICAHT', 'VWSH', '4LFTX',
+  'DPT', 'var', 'CPOFP', 'WILT', 'FLDCP', 'LFTX', 'CAPE', 'CIN', '4LFTX',
+  'PWAT', 'CWAT', 'TOZNE', 'HLCY', 'USTM', 'VSTM', 'ICAHT', 'VWSH',
   'HPBL', 'POT', 'PLPL', 'LAND', 'ICEC', 'PRMSL', '5WAVH'
 ]
 const sfluxVars = [

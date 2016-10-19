@@ -170,9 +170,10 @@ export default class Client {
         req.set('Range', `bytes=${start}-${end}`)
       }
 
-      req
-      .on('end', () => resolve(writable.path))
-      .pipe(writable)
+      writable.on('close', () => resolve(writable.path))
+      writable.on('error', (e) => reject(e))
+
+      req.pipe(writable)
     })
   }
 

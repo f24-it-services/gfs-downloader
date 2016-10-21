@@ -1,3 +1,4 @@
+import fs from 'fs'
 import request from 'superagent'
 import Cache from 'node-cache'
 import arrayMax from 'lodash.max'
@@ -81,16 +82,16 @@ export default class Client {
    * name and surface as specified in grib2 indexes.
    * Returns a promise which is resolved with an object having the same props
    * as the `field` parameter, extended with the key `file`, containing the file
-   * name the give `writeStream` was pointing to.
+   * name `localPath` is pointing to.
    *
    * @param {Date} generatedDate
    * @param {Number} forecastOffset
    * @param {Object} field
-   * @param {Stream} writeStream
+   * @param {String} localPath
    * @param {Function} progressCb
    * @return {Promise}
    */
-  downloadField (generatedDate, forecastOffset, field, writeStream, progressCb = NOOP) {
+  downloadField (generatedDate, forecastOffset, field, localPath, progressCb = NOOP) {
     let y = generatedDate.getFullYear()
     let m = padStart(generatedDate.getMonth() + 1, 2, '0')
     let d = padStart(generatedDate.getDate(), 2, '0')
@@ -117,7 +118,7 @@ export default class Client {
       debug(`download ${field.name}@${field.surface} from ${url}`)
       return this.__download(
         entry.url,
-        writeStream,
+        localPath,
         entry.start,
         entry.end,
         progressCb
@@ -156,10 +157,11 @@ export default class Client {
     }
   }
 
-  __download (url, writable, start, end, progressCb) {
-    debug(`download bytes ${start}-${end} from ${url} to ${writable.path}`)
+  __download (url, localPath, start, end, progressCb) {
+    debug(`download bytes ${start}-${end} from ${url} to ${localPath}`)
 
     return new Promise((resolve, reject) => {
+      let writable = fs.createWriteStream(localPath)
       let req = request.get(url)
       .buffer(false)
       .on('progress', progressCb)

@@ -79,6 +79,7 @@ export default class Downloader {
   __downloadFields (generatedDate) {
     let downloads = []
     let results = []
+
     for (let fc = this.fcStart; fc <= this.fcEnd; fc += 3) {
       this.fields.forEach((field) => {
         let dateStr = generatedDate.toJSON()

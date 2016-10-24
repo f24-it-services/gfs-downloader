@@ -115,18 +115,36 @@ export default class Client {
         ))
       }
 
-      debug(`download ${field.name}@${field.surface} from ${url}`)
-      return this.__download(
-        entry.url,
-        localPath,
-        entry.start,
-        entry.end,
-        progressCb
-      )
+      return this.__checkFile(localPath, entry)
+      .then((skip) => {
+        if (skip) {
+          debug(`${localPath} already downloaded`)
+          return localPath
+        }
+
+        debug(`download ${field.name}@${field.surface} from ${url}`)
+        return this.__download(
+          entry.url,
+          localPath,
+          entry.start,
+          entry.end,
+          progressCb
+        )
+      })
       .then((path) => ({
         ...field,
         file: path
       }))
+    })
+  }
+
+  __checkFile (localPath, entry) {
+    return new Promise((resolve, reject) => {
+      fs.stat(localPath, (err, stats) => {
+        if (err) return resolve(false)
+        debug(`File exists already, compare size ...`)
+        return resolve((entry.end - entry.start + 1) === stats.size)
+      })
     })
   }
 

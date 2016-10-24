@@ -3,11 +3,12 @@
 const assert = require('assert')
 const Downloader = require('../src/index').Downloader
 const mkdirp = require('mkdirp')
+const path = require('path')
 
 describe('#Downloader', function () {
   var config = {
     latestUpdate: null,
-    target: './tmp/gfs-downloader',
+    target: path.resolve(__dirname, '/tmp/gfs-downloader'),
     forecastStart: 0, // now up to
     forecastEnd: 12,  // 12 hour forecast
     fields: [{

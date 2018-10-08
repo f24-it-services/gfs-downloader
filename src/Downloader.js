@@ -3,8 +3,8 @@ import path from 'path'
 import padStart from 'lodash.padstart'
 import debugFactory from 'debug'
 
-import {Client} from '.'
-import {sequence} from 'gfs-weather-utils'
+import { Client } from '.'
+import { sequence } from 'gfs-weather-utils'
 
 const debug = debugFactory('gfs.downloader')
 
@@ -72,7 +72,7 @@ export default class Downloader {
       }
 
       return this.__downloadFields(date)
-      .then((files) => [files, date])
+        .then((files) => [files, date])
     })
   }
 
@@ -94,12 +94,12 @@ export default class Downloader {
           return this.client.downloadField(
             generatedDate, forecastOffset, field, localPath
           )
-          .then((result) => {
-            results.push({
-              ...result,
-              forecast: forecastOffset
-            })
-          }) // this.client.downloadField
+            .then((result) => {
+              results.push({
+                ...result,
+                forecast: forecastOffset
+              })
+            }) // this.client.downloadField
         }) // downloads.push()
       }) // this.fields.forEach()
     } // for (;;)

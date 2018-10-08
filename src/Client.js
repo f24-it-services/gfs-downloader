@@ -116,25 +116,25 @@ export default class Client {
       }
 
       return this.__checkFile(localPath, entry)
-      .then((skip) => {
-        if (skip) {
-          debug(`${localPath} already downloaded`)
-          return localPath
-        }
+        .then((skip) => {
+          if (skip) {
+            debug(`${localPath} already downloaded`)
+            return localPath
+          }
 
-        debug(`download ${field.name}@${field.surface} from ${url}`)
-        return this.__download(
-          entry.url,
-          localPath,
-          entry.start,
-          entry.end,
-          progressCb
-        )
-      })
-      .then((path) => ({
-        ...field,
-        file: path
-      }))
+          debug(`download ${field.name}@${field.surface} from ${url}`)
+          return this.__download(
+            entry.url,
+            localPath,
+            entry.start,
+            entry.end,
+            progressCb
+          )
+        })
+        .then((path) => ({
+          ...field,
+          file: path
+        }))
     })
   }
 
@@ -165,13 +165,13 @@ export default class Client {
       })
     } else {
       request
-      .get(url)
-      .buffer(true)
-      .end((err, res) => {
-        if (err) return cb(err)
-        this.cache.set(url, res.text)
-        cb(null, res.text)
-      })
+        .get(url)
+        .buffer(true)
+        .end((err, res) => {
+          if (err) return cb(err)
+          this.cache.set(url, res.text)
+          cb(null, res.text)
+        })
     }
   }
 
@@ -181,9 +181,9 @@ export default class Client {
     return new Promise((resolve, reject) => {
       let writable = fs.createWriteStream(localPath)
       let req = request.get(url)
-      .buffer(false)
-      .on('progress', progressCb)
-      .on('error', reject)
+        .buffer(false)
+        .on('progress', progressCb)
+        .on('error', reject)
 
       if (start !== undefined && end !== undefined) {
         debug(`Set Range header to bytes=${start}-${end}`)

@@ -10,7 +10,7 @@ describe('#Downloader', function () {
     latestUpdate: null,
     target: path.resolve(__dirname, '/tmp/gfs-downloader'),
     forecastStart: 0, // now up to
-    forecastEnd: 12,  // 12 hour forecast
+    forecastEnd: 12, // 12 hour forecast
     fields: [{
       name: 'TMP',
       surface: 'surface',
@@ -19,16 +19,16 @@ describe('#Downloader', function () {
   }
 
   describe('#uploadtime', function () {
-    it('can corret the date of uploading on the servers', function () {
+    it('can correct the date of uploading on the servers', function () {
       var dl = new Downloader(config)
       var date = dl.uploadtime('2016-10-20T13:17:00')
-      assert.equal(date.toISOString(), '2016-10-20T06:00:00.000Z')
+      assert.strictEqual(date.toISOString(), '2016-10-20T06:00:00.000Z')
     })
 
     it('can correct the date of uploading on the servers #2', function () {
       var dl = new Downloader(config)
       var date = dl.uploadtime('2016-10-20T00:17:01')
-      assert.equal(date.toISOString(), '2016-10-19T18:00:00.000Z')
+      assert.strictEqual(date.toISOString(), '2016-10-19T12:00:00.000Z')
     })
   })
 
@@ -43,10 +43,10 @@ describe('#Downloader', function () {
       var date = dl.uploadtime()
       dl.update(date).then(
         ([files, generatedDate]) => {
-          assert.equal(generatedDate, date)
+          assert.strictEqual(generatedDate, date)
           assert.ok(Array.isArray(files))
-          assert.deepEqual(Object.keys(files[0]).sort(), [ 'file', 'forecast', 'name', 'resolution', 'surface' ])
-          assert.equal(files.length, 5)
+          assert.deepStrictEqual(Object.keys(files[0]).sort(), [ 'file', 'forecast', 'name', 'resolution', 'surface' ])
+          assert.strictEqual(files.length, 5)
           done()
         },
         (err) => {

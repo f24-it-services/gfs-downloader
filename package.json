@@ -2,23 +2,38 @@
   "name": "gfs-downloader",
   "version": "1.0.5",
   "description": "Helpers for downloading meteorological data from NOOA servers",
-  "main": "src/index.js",
-  "jsnext:main": "src/index.js",
-  "scripts": {
-    "prepublishOnly": "npm-run-all lint dist test",
-    "test": "mocha",
-    "dist": "babel src -d lib --ignore node_modules,lib",
-    "watch": "npm run dist -- -w",
-    "lint": "eslint '**/*.js'"
+  "keywords": [],
+  "homepage": "https://github.com/f24-it-services/gfs-downloader#readme",
+  "bugs": {
+    "url": "https://github.com/f24-it-services/gfs-downloader/issues"
   },
-  "author": "Johannes Klose <jklose@calitrix.com>",
   "license": "MIT",
+  "author": "Johannes Klose <jklose@calitrix.com>",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/f24-it-services/gfs-downloader.git"
+  },
+  "scripts": {
+    "all": "npm-run-all clean lint dist test",
+    "clean": "rimraf lib",
+    "dist": "babel src -d lib --ignore node_modules,lib",
+    "lint": "eslint '**/*.js'",
+    "prepublishOnly": "npm run all",
+    "test": "mocha",
+    "watch": "npm run dist -- -w"
+  },
   "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ],
     "plugins": [
       "@babel/plugin-proposal-object-rest-spread"
+    ],
+    "presets": [
+      "@babel/preset-env"
     ]
   },
   "eslintConfig": {
@@ -50,6 +65,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "mkdirp": "^0.5.1",
     "mocha": "^6.1.4",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "rimraf": "*"
   }
 }

@@ -102,7 +102,7 @@ export default class Client {
       field.resolution,
       forecastOffset
     )
-    let url = `gfs.${y}${m}${d}${h}/${gfsFileName}`
+    let url = `gfs.${y}${m}${d}/${h}/${gfsFileName}`
 
     return this.getGribIndex(url).then((index) => {
       let entry = index.find(

@@ -41,7 +41,11 @@
     "plugins": [
       "standard",
       "promise"
-    ]
+    ],
+    "env": {
+      "node": true,
+      "mocha": true
+    }
   },
   "dependencies": {
     "debug": "^4.1.1",

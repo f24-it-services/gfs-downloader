@@ -1,5 +1,3 @@
-/* global describe, it, before */
-
 const assert = require('assert')
 const Downloader = require('../src/index').Downloader
 const mkdirp = require('mkdirp')

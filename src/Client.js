@@ -10,6 +10,18 @@ const GFS_BASE_URL = 'https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/'
 const NOOP = () => {}
 
 /**
+ * helper function to get year, month, day and hour
+ * @private
+ */
+function getDate (date) {
+  const y = date.getFullYear()
+  const m = padStart(date.getMonth() + 1, 2, '0')
+  const d = padStart(date.getDate(), 2, '0')
+  const h = padStart(date.getUTCHours(), 2, '0')
+  return { y, m, d, h }
+}
+
+/**
  *
  */
 export default class Client {
@@ -28,13 +40,18 @@ export default class Client {
     debug(`Find latest folder on ${this.baseUrl}`)
 
     return new Promise((resolve, reject) => {
+      // first lookup for date
       this.__get((err, res) => {
         if (err) return reject(err)
-
-        let dates = res.match(/gfs\.\d{10}/g)
-        let max = arrayMax(dates.map(d => parseInt(d.substr(4))))
-
-        resolve(this.__parseDate(max.toString()))
+        const dates = res.match(/gfs\.\d{8}/g)
+        const max = arrayMax(dates.map(d => parseInt(d.substr(4))))
+        // second lookup for hour
+        this.__get(`gfs.${max}`, (err, res) => {
+          if (err) return reject(err)
+          const dates = res.match(/>\d{2}/g)
+          const max2 = arrayMax(dates.map(d => parseInt(max + d.substr(1))))
+          resolve(this.__parseDate(max2.toString()))
+        })
       })
     })
   }
@@ -92,20 +109,17 @@ export default class Client {
    * @return {Promise}
    */
   downloadField (generatedDate, forecastOffset, field, localPath, progressCb = NOOP) {
-    let y = generatedDate.getFullYear()
-    let m = padStart(generatedDate.getMonth() + 1, 2, '0')
-    let d = padStart(generatedDate.getDate(), 2, '0')
-    let h = padStart(generatedDate.getUTCHours(), 2, '0')
-    let gfsFileName = this.__resolveFileName(
+    const { y, m, d, h } = getDate(generatedDate)
+    const gfsFileName = this.__resolveFileName(
       generatedDate.getUTCHours(),
       field.name,
       field.resolution,
       forecastOffset
     )
-    let url = `gfs.${y}${m}${d}/${h}/${gfsFileName}`
     if (!gfsFileName) { // special case for sfluxgrb with forecastOffset===0
       return Promise.resolve()
     }
+    const url = `gfs.${y}${m}${d}/${h}/${gfsFileName}`
     return this.getGribIndex(url).then((index) => {
       let entry = index.find(
         (entry) => entry.name === field.name && entry.surface === field.surface

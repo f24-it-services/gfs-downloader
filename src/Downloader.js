@@ -95,10 +95,12 @@ export default class Downloader {
             generatedDate, forecastOffset, field, localPath
           )
             .then((result) => {
-              results.push({
-                ...result,
-                forecast: forecastOffset
-              })
+              if (result) {
+                results.push({
+                  ...result,
+                  forecast: forecastOffset
+                })
+              }
             }) // this.client.downloadField
         }) // downloads.push()
       }) // this.fields.forEach()

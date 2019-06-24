@@ -6,7 +6,7 @@ import padStart from 'lodash.padstart'
 import debugFactory from 'debug'
 
 const debug = debugFactory('gfs.client')
-const GFS_BASE_URL = 'http://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/'
+const GFS_BASE_URL = 'https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/'
 const NOOP = () => {}
 
 /**
@@ -103,7 +103,9 @@ export default class Client {
       forecastOffset
     )
     let url = `gfs.${y}${m}${d}/${h}/${gfsFileName}`
-
+    if (!gfsFileName) { // special case for sfluxgrb with forecastOffset===0
+      return Promise.resolve()
+    }
     return this.getGribIndex(url).then((index) => {
       let entry = index.find(
         (entry) => entry.name === field.name && entry.surface === field.surface
@@ -217,7 +219,8 @@ export default class Client {
     }
 
     if (sfluxVars.indexOf(fieldName) !== -1) {
-      let strForecast = padStart(forecast, 2, '0')
+      if (forecast === 0) forecast = 1 // file does not contain all required fields
+      let strForecast = padStart(forecast, 3, '0')
       return `gfs.t${strGeneratedHour}z.sfluxgrbf${strForecast}.grib2`
     }
 
@@ -225,6 +228,7 @@ export default class Client {
   }
 }
 
+// from https://www.nco.ncep.noaa.gov/pmb/products/gfs/gfs.t00z.pgrb2.1p00.f000.shtml
 const pgrbVars = [
   'UGRD', 'VGRD', 'VRATE', 'GUST', 'HGT', 'TMP', 'RH', 'O3MR', 'ABSV', 'VVEL',
   'CLWMR', 'HINDEX', 'MSLET', 'PRES', 'TSOIL', 'SOILW', 'WEASD', 'SNOD', 'SPFH',
@@ -232,6 +236,7 @@ const pgrbVars = [
   'PWAT', 'CWAT', 'TOZNE', 'HLCY', 'USTM', 'VSTM', 'ICAHT', 'VWSH',
   'HPBL', 'POT', 'PLPL', 'LAND', 'ICEC', 'PRMSL', '5WAVH'
 ]
+// from https://www.nco.ncep.noaa.gov/pmb/products/gfs/gfs.t00z.sfluxgrbf00.grib2.shtml
 const sfluxVars = [
   'UFLX', 'VFLX', 'SHTFL', 'LHTFL', 'TMP', 'SOILW', 'WEASD', 'ULWRF', 'USWRF',
   'DSWRF', 'TCDC', 'PRES', 'DLWRF', 'DUVB', 'CDUVB', 'VBDSF', 'VDDSF', 'NBDSF',

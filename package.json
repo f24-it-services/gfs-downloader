@@ -1,6 +1,6 @@
 {
   "name": "gfs-downloader",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Helpers for downloading meteorological data from NOOA servers",
   "keywords": [],
   "homepage": "https://github.com/f24-it-services/gfs-downloader#readme",

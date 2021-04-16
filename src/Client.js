@@ -119,7 +119,7 @@ export default class Client {
     if (!gfsFileName) { // special case for sfluxgrb with forecastOffset===0
       return Promise.resolve()
     }
-    const url = `gfs.${y}${m}${d}/${h}/${gfsFileName}`
+    const url = `gfs.${y}${m}${d}/${h}/atmos/${gfsFileName}`
     return this.getGribIndex(url).then((index) => {
       let entry = index.find(
         (entry) => entry.name === field.name && entry.surface === field.surface

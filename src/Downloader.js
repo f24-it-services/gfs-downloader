@@ -30,7 +30,7 @@ export default class Downloader {
   uploadtime (date) {
     date = date ? new Date(date) : new Date()
     // correct date by 4 hours (UTC timeshift for uploading at NOOA)
-    let dateTicks = +date - 4 * 3600000
+    const dateTicks = +date - 4 * 3600000
     date = new Date(dateTicks)
     date.setUTCMinutes(0)
     date.setUTCSeconds(0)
@@ -77,18 +77,18 @@ export default class Downloader {
   }
 
   __downloadFields (generatedDate) {
-    let downloads = []
-    let results = []
+    const downloads = []
+    const results = []
 
     for (let fc = this.fcStart; fc <= this.fcEnd; fc += 3) {
       this.fields.forEach((field) => {
-        let dateStr = generatedDate.toJSON()
-        let fcStr = padStart(fc, 3, '0')
-        let localFileName = `${dateStr}-${field.name}-${field.surface}-${fcStr}`
+        const dateStr = generatedDate.toJSON()
+        const fcStr = padStart(fc, 3, '0')
+        const localFileName = `${dateStr}-${field.name}-${field.surface}-${fcStr}`
           .replace(/[\W]/g, '-')
           .replace(/-{2,}/, '-')
-        let localPath = path.join(this.target, localFileName)
-        let forecastOffset = fc
+        const localPath = path.join(this.target, localFileName)
+        const forecastOffset = fc
 
         downloads.push(() => {
           return this.client.downloadField(

@@ -4,7 +4,7 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 
 describe('#Downloader', function () {
-  var config = {
+  const config = {
     latestUpdate: null,
     target: path.resolve(__dirname, '/tmp/gfs-downloader'),
     forecastStart: 0, // now up to
@@ -18,32 +18,32 @@ describe('#Downloader', function () {
 
   describe('#uploadtime', function () {
     it('can correct the date of uploading on the servers', function () {
-      var dl = new Downloader(config)
-      var date = dl.uploadtime('2016-10-20T13:17:00')
+      const dl = new Downloader(config)
+      const date = dl.uploadtime('2016-10-20T13:17:00')
       assert.strictEqual(date.toISOString(), '2016-10-20T06:00:00.000Z')
     })
 
     it('can correct the date of uploading on the servers #2', function () {
-      var dl = new Downloader(config)
-      var date = dl.uploadtime('2016-10-20T00:17:01')
+      const dl = new Downloader(config)
+      const date = dl.uploadtime('2016-10-20T00:17:01')
       assert.strictEqual(date.toISOString(), '2016-10-19T12:00:00.000Z')
     })
   })
 
   describe('#update', function () {
-    before(function (done) {
-      mkdirp(config.target, done)
+    before(function () {
+      return mkdirp(config.target)
     })
 
     it('can download pgrb2 files from server', function (done) {
       this.timeout(20000)
-      var dl = new Downloader(config)
-      var date = dl.uploadtime()
+      const dl = new Downloader(config)
+      const date = dl.uploadtime()
       dl.update(date).then(
         ([files, generatedDate]) => {
           assert.strictEqual(generatedDate, date)
           assert.ok(Array.isArray(files))
-          assert.deepStrictEqual(Object.keys(files[0]).sort(), [ 'file', 'forecast', 'name', 'resolution', 'surface' ])
+          assert.deepStrictEqual(Object.keys(files[0]).sort(), ['file', 'forecast', 'name', 'resolution', 'surface'])
           assert.strictEqual(files.length, 5)
           done()
         },
@@ -54,7 +54,7 @@ describe('#Downloader', function () {
     })
 
     it('can download sfluxgrb files from server', function (done) {
-      var config = {
+      const config = {
         latestUpdate: null,
         target: path.resolve(__dirname, '/tmp/gfs-downloader'),
         forecastStart: 0, // now up to
@@ -67,13 +67,13 @@ describe('#Downloader', function () {
       }
 
       this.timeout(20000)
-      var dl = new Downloader(config)
-      var date = dl.uploadtime()
+      const dl = new Downloader(config)
+      const date = dl.uploadtime()
       dl.update(date).then(
         ([files, generatedDate]) => {
           assert.strictEqual(generatedDate, date)
           assert.ok(Array.isArray(files))
-          assert.deepStrictEqual(Object.keys(files[0]).sort(), [ 'file', 'forecast', 'name', 'process', 'surface' ])
+          assert.deepStrictEqual(Object.keys(files[0]).sort(), ['file', 'forecast', 'name', 'process', 'surface'])
           assert.strictEqual(files.length, 5) //
           done()
         },

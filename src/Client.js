@@ -66,7 +66,7 @@ export default class Client {
       this.__get(`${fileUrl}.idx`, (err, res) => {
         if (err) return reject(err)
 
-        let index = []
+        const index = []
         let i = 0
 
         res.split(/\n/).forEach((line) => {
@@ -121,7 +121,7 @@ export default class Client {
     }
     const url = `gfs.${y}${m}${d}/${h}/atmos/${gfsFileName}`
     return this.getGribIndex(url).then((index) => {
-      let entry = index.find(
+      const entry = index.find(
         (entry) => entry.name === field.name && entry.surface === field.surface
       )
 
@@ -158,7 +158,7 @@ export default class Client {
     return new Promise((resolve, reject) => {
       fs.stat(localPath, (err, stats) => {
         if (err) return resolve(false)
-        debug(`File exists already, compare size ...`)
+        debug('File exists already, compare size ...')
         return resolve((entry.end - entry.start + 1) === stats.size)
       })
     })
@@ -173,7 +173,7 @@ export default class Client {
     const url = this.baseUrl + path
     debug(`Fetch ${url}`)
 
-    let cachedValue = this.cache.get(url)
+    const cachedValue = this.cache.get(url)
     if (cachedValue !== undefined) {
       debug('Return from cache')
       process.nextTick(() => {
@@ -195,8 +195,8 @@ export default class Client {
     debug(`download bytes ${start}-${end} from ${url} to ${localPath}`)
 
     return new Promise((resolve, reject) => {
-      let writable = fs.createWriteStream(localPath)
-      let req = request.get(url)
+      const writable = fs.createWriteStream(localPath)
+      const req = request.get(url)
         .buffer(false)
         .on('progress', progressCb)
         .on('error', reject)
@@ -223,18 +223,18 @@ export default class Client {
   }
 
   __resolveFileName (generatedHour, fieldName, resolution, forecast) {
-    let strGeneratedHour = padStart(generatedHour, 2, '0')
+    const strGeneratedHour = padStart(generatedHour, 2, '0')
 
     if (pgrbVars.indexOf(fieldName) !== -1) {
-      let strResolution = resolution.toFixed(2).replace('.', 'p')
-      let strForecast = padStart(forecast, 3, '0')
+      const strResolution = resolution.toFixed(2).replace('.', 'p')
+      const strForecast = padStart(forecast, 3, '0')
 
       return `gfs.t${strGeneratedHour}z.pgrb2.${strResolution}.f${strForecast}`
     }
 
     if (sfluxVars.indexOf(fieldName) !== -1) {
       if (forecast === 0) forecast = 1 // file does not contain all required fields
-      let strForecast = padStart(forecast, 3, '0')
+      const strForecast = padStart(forecast, 3, '0')
       return `gfs.t${strGeneratedHour}z.sfluxgrbf${strForecast}.grib2`
     }
 

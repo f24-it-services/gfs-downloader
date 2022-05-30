@@ -4,6 +4,8 @@ import Cache from 'node-cache'
 import arrayMax from 'lodash.max'
 import padStart from 'lodash.padstart'
 import debugFactory from 'debug'
+import shouldProxy from 'should-proxy'
+import superagentProxy from 'superagent-proxy'
 
 const debug = debugFactory('gfs.client')
 const GFS_BASE_URL = 'https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/'
@@ -21,15 +23,26 @@ function getDate (date) {
   return { y, m, d, h }
 }
 
+function getProxy (url, proxy, noProxy) {
+  if (!proxy) return
+  if (noProxy && !shouldProxy(url, { noProxy })) {
+    return
+  }
+  return proxy
+}
+
 /**
  *
  */
 export default class Client {
-  constructor (baseUrl = GFS_BASE_URL) {
+  constructor (baseUrl = GFS_BASE_URL, proxy, noProxy) {
     this.baseUrl = baseUrl
     this.cache = new Cache({
       stdTTL: 60
     })
+
+    this.proxy = getProxy(baseUrl, proxy, noProxy)
+    this.request = this.proxy ? superagentProxy(request) : request
   }
 
   /**
@@ -180,9 +193,10 @@ export default class Client {
         cb(null, cachedValue)
       })
     } else {
-      request
+      const req = this.request
         .get(url)
-        .buffer(true)
+      if (this.proxy) req.proxy(this.proxy)
+      req.buffer(true)
         .end((err, res) => {
           if (err) return cb(err)
           this.cache.set(url, res.text)
@@ -196,10 +210,12 @@ export default class Client {
 
     return new Promise((resolve, reject) => {
       const writable = fs.createWriteStream(localPath)
-      const req = request.get(url)
+      const req = this.request.get(url)
         .buffer(false)
         .on('progress', progressCb)
         .on('error', reject)
+
+      if (this.proxy) req.proxy(this.proxy)
 
       if (start !== undefined && end !== undefined) {
         debug(`Set Range header to bytes=${start}-${end}`)

@@ -19,7 +19,7 @@ export default class Downloader {
       throw new Error(this.target + ' is not writable')
     }
 
-    this.client = config.client || new Client()
+    this.client = config.client || new Client(config.baseUrl, config.proxy, config.noProxy)
   }
 
   /**
